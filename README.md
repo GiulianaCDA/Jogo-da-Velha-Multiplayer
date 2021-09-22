@@ -15,7 +15,7 @@ Para saber como instalar a biblioteca pygame em outros sistemas operacionais, le
 2. Após a instalação, o server.py deve ser executado. Isso pode ser feito com o seguinte comando no terminal:
 
 ```
-python3 server.py`
+python3 server.py
 ```
 
 3. Em seguida, é necessário executar o client.py para entrar como jogador:
@@ -23,5 +23,5 @@ python3 server.py`
 ```
 python3 client.py
 ```
-Divirta-se :D
+A partir disso já é possível utilizar o jogo. Divirta-se ;D
 
