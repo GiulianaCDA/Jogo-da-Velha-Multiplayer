@@ -23,5 +23,5 @@ python3 server.py
 ```
 python3 client.py
 ```
-A partir disso já é possível utilizar o jogo. Divirta-se ;D
+A partir disso já é possível utilizar o jogo. Divirta-se :D
 
