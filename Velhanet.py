@@ -1,4 +1,5 @@
 import pygame
+from network import Network, wait_player
 from pygame.locals import MOUSEBUTTONDOWN, Rect, QUIT
 from sys import exit
 
@@ -102,8 +103,11 @@ def pontos(pontos1, pontos2):
 
 pygame.init()
 
+rede = Network()
+
 tela = pygame.display.set_mode((600, 600), 0, 32)
 pygame.display.set_caption('Jogo da velha')
+wait_player(rede, tela)
 
 ESTADO = 'JOGANDO'
 VEZ = 'JOGADOR1'
@@ -132,7 +136,7 @@ rec = [
 
 pontos1, pontos2 = 0, 0
 
-print(pygame.font.get_fonts())
+#print(pygame.font.get_fonts())
 
 while True:
     mouse_pos = pygame.mouse.get_pos()

@@ -1,4 +1,5 @@
 import socket
+import pygame
 
 class Network:
     def __init__(self):
@@ -19,3 +20,20 @@ class Network:
             return response
         except socket.error as error:
             return str(error)
+
+def wait_player(rede, screen):
+    arial = pygame.font.SysFont('arial', 70)
+    texto = arial.render('Aguarde...', True, (0, 255, 0), 0)
+    screen.blit(texto, (115, 265))
+    pygame.display.flip()
+    
+    player = 2
+    while True:
+        msg = "1"
+        response = rede.send(msg)
+        while response == '1':
+            response = rede.send(msg)
+            player = 1
+        break
+    screen.fill(0) 
+    return player
