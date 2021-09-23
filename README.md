@@ -18,10 +18,10 @@ Para saber como instalar a biblioteca pygame em outros sistemas operacionais, le
 python3 server.py
 ```
 
-3. Em seguida, é necessário executar o client.py para entrar como jogador:
+3. Em seguida, é necessário executar o client.py duas vezes para entrar com os dois jogadores. O jogo só inicia após a entrada do jogador 2. Para isso, execute o código abaixo:
 
 ```
 python3 client.py
 ```
-A partir disso já é possível utilizar o jogo. Divirta-se :D
+Agora já é possível utilizar o jogo. Divirta-se :D
 
