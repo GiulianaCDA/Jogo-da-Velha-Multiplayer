@@ -29,10 +29,10 @@ def wait_player(rede, screen):
     
     player = 2
     while True:
-        msg = "1"
-        response = rede.send(msg)
+        req = "players"
+        response = rede.send(req)
         while response == '1':
-            response = rede.send(msg)
+            response = rede.send(req)
             player = 1
         break
     screen.fill(0) 

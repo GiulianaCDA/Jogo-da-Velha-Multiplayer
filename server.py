@@ -33,24 +33,36 @@ def threaded(conn):
     conn.send(str.encode('Início'))
     VEZ = '1'
     response = ' '
-    if(number_of_connections == 2):
-        conn.sendall(str.encode('O jogo vai iniciar!'))
+    jogador = '1'
+    x = '0' #inicializando x
+    y = '0' #inicializando y
+    ready = 0
     while True:
         try:
             request = conn.recv(4096).decode('utf-8')
-          #  print("Cliente disse: " + request)
-            if (number_of_connections == 1):
+            request = request.split(' ')
+            op = request[0]
+            print(request)
+            if op == "players":
                 response = str(number_of_connections)
-            elif request == 'vez atual': 
-                response = VEZ
-            elif request != VEZ and number_of_connections == 2:
-                response = 'jogou'
-                VEZ = request
-                print(request)
-                print(VEZ)
-            else:
-                response = ' '
-           # print("Servidor: " + response)
+            elif op == "jogada":
+                jogador = request[1]
+                x = request[2]
+                y = request[3]
+                if VEZ == '1':
+                    VEZ = '2'
+                else: VEZ = '1'
+            elif op == "updatevez":
+                #print(f"Vez: {VEZ} request: {request[1]}")
+                if request[1] != VEZ: 
+                    print(f"u {VEZ} {jogador} {x} {y}")
+                    ready = 1
+                    response = f"u {VEZ} {jogador} {x} {y}"
+                else:
+                    response = "OK"
+            elif op == 'espera':
+                if ready == 1: response = 'OK'
+                else: response = 'esperando'
             conn.sendall(str.encode(response))
         except Exception as error:
             print('Error on server side!', error)

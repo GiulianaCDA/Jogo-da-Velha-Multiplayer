@@ -2,6 +2,7 @@ import pygame
 from network import Network, wait_player
 from pygame.locals import MOUSEBUTTONDOWN, Rect, QUIT
 from sys import exit
+from time import sleep
 
 def desenhar_tabu():
     pygame.draw.line(tela, (255, 255, 255), (200, 0), (200, 600), 10)
@@ -42,7 +43,7 @@ def testa_pos():
                 confirmar(8, [500, 500])
 
 def confirmar(indice, pos):
-    global ESCOLHA, VEZ, espaco, rede
+    global ESCOLHA, VEZ, espaco, rede, jogador
     if marca_tabu[indice] == 'X':
         print('X')
     elif marca_tabu[indice] == 'O':
@@ -56,7 +57,7 @@ def confirmar(indice, pos):
         else:
             VEZ = 1
         espaco +=1
-    rede.send('jogou')
+    rede.send(f"jogada {str(jogador)} {str(pos[0])} {str(pos[1])}")
 
 def teste_vitoria(l):
     return ((marca_tabu[0] == l and marca_tabu[1] == l and marca_tabu[2] == l) or
@@ -158,7 +159,10 @@ while True:
                     else:
                         ESCOLHA = 'O'
                     testa_pos()
-
+                    while True:
+                        sleep(0.5)
+                        response = rede.send('espera')
+                        if response == 'OK': break
 
         if teste_vitoria('X'):
             print('X VENCEU')
@@ -187,7 +191,12 @@ while True:
                 desenhar_tabu()
 
     pygame.display.flip()
-    response = rede.send(str(VEZ))
-    if response == 'jogou':
-        print('Alguém jogou')
-    VEZ = rede.send('vez atual')
+    response = rede.send(f"updatevez {str(VEZ)}")
+    response = response.split(' ')
+    if response != ['OK']: print(response)
+    if response[0] == 'u':
+        VEZ = int(response[1])
+        x = int(response[3])
+        y = int(response[4])
+        print(f"Jogada detectada na vez {VEZ}, posição x = {x}, posição y = {y}")
+        desenhar_peca([x, y])
