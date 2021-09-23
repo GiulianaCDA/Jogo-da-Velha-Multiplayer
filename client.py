@@ -2,23 +2,23 @@ import pygame
 from network import Network, wait_player
 from pygame.locals import MOUSEBUTTONDOWN, Rect, QUIT
 from sys import exit
-from time import sleep
 
 def desenhar_tabu():
-    pygame.draw.line(tela, (255, 255, 255), (200, 0), (200, 600), 10)
-    pygame.draw.line(tela, (255, 255, 255), (400, 0), (400, 600), 10)
-    pygame.draw.line(tela, (255, 255, 255), (0, 200), (600, 200), 10)
-    pygame.draw.line(tela, (255, 255, 255), (0, 400), (600, 400), 10)
+    pygame.draw.line(tela, (255, 216, 110), (200, 40), (200, 560), 10) 
+    pygame.draw.line(tela, (255, 216, 110), (400, 40), (400, 560), 10)
+    pygame.draw.line(tela, (255, 216, 110), (40, 200), (560, 200), 10)
+    pygame.draw.line(tela, (255, 216, 110), (40, 400), (560, 400), 10)  
 
-def desenhar_peca(pos):
-    global VEZ
+def desenhar_peca(pos, quemjogou): 
     x, y = pos
-    if VEZ == 2:
-        pygame.draw.circle(tela, (0, 0, 255), pos, 50)
+    if quemjogou == 2:
+        img = pygame.image.load('circle.png').convert_alpha()
+        imgR = pygame.transform.scale(img, (150, 150)) 
+        tela.blit(imgR, (x - 75, y - 75))
     else:
         img = pygame.image.load('x.png').convert_alpha()
-        imgR = pygame.transform.scale(img, (100, 100))
-        tela.blit(imgR, (x - 50, y - 50))
+        imgR = pygame.transform.scale(img, (150, 150))
+        tela.blit(imgR, (x - 75, y - 75))
 
 def testa_pos():
     for p in rec:
@@ -50,13 +50,14 @@ def confirmar(indice, pos):
         print('O')
     else:
         marca_tabu[indice] = ESCOLHA
-        desenhar_peca(pos)
+        desenhar_peca(pos, jogador)
         print(marca_tabu)
         if VEZ == 1:
             VEZ = 2
         else:
             VEZ = 1
         espaco +=1
+    # Avisando para o servidor que uma jogada foi feita
     rede.send(f"jogada {str(jogador)} {str(pos[0])} {str(pos[1])}")
 
 def teste_vitoria(l):
@@ -70,15 +71,15 @@ def teste_vitoria(l):
         (marca_tabu[2] == l and marca_tabu[4] == l and marca_tabu[6] == l))
 
 def texto_vitoria(v):
-    arial = pygame.font.SysFont('arial', 70)
-    mensagem = 'JOGADOR {} VENCEU'.format(v)
+    opensans = pygame.font.SysFont('opensanscondensed', 45)
+    mensagem = 'JOGADOR {} VENCEU'.format(v) 
 
     if v == 'EMPATE':
-        mens_vitoria = arial.render('DEU VELHA', True, (0, 255, 0), 0)
+        mens_vitoria = opensans.render('DEU VELHA', True, (18, 19, 101), (255, 255, 255))
         tela.blit(mens_vitoria, (115, 265))
     else:
-        mens_vitoria = arial.render(mensagem, True, (0, 255, 0), 0)
-        tela.blit(mens_vitoria, (0, 265))
+        mens_vitoria = opensans.render(mensagem, True, (18, 19, 101), (255, 255, 255)) 
+        tela.blit(mens_vitoria, (100, 265))
 
 def reset():
         global ESCOLHA, ESTADO, VEZ, marca_tabu, espaco
@@ -93,22 +94,24 @@ def reset():
         ]
         tela.fill(0)
 
-def pontos(pontos1, pontos2):
-    arial = pygame.font.SysFont('mingliuextbpmingliuextbmingliuhkscsextb', 20)
+'''def pontos(pontos1, pontos2):
+    opensans = pygame.font.SysFont('opensanscondensed', 20)
     jogador1 = 'Jogador1 = {}'.format(pontos1)
-    jogador2 = 'Jogador2 = {}'.format(pontos2)
+    jogador2 = 'Jogador2 = {}'.format(pontos2) 
 
-    jd1 = arial.render(jogador1, True, (188, 186, 186))
-    jd2 = arial.render(jogador2, True, (188, 186, 186))
+    jd1 = opensans.render(jogador1, True, (188, 186, 186))
+    jd2 = opensans.render(jogador2, True, (188, 186, 186))
     tela.blit(jd1, (0, 0))
-    tela.blit(jd2, (420, 0))
+    tela.blit(jd2, (420, 0))'''
 
-pygame.init()
+pygame.init() 
 
 rede = Network()
 
 tela = pygame.display.set_mode((600, 600), 0, 32)
-pygame.display.set_caption('Jogo da velha')
+pygame.display.set_caption('Jogo da velha') 
+tela.fill((18, 19, 101)) 
+# Se conectando com o servidor e aguardando os dois jogadores se conectarem
 jogador = wait_player(rede, tela)
 print(f'jogador: {jogador}')
 
@@ -140,14 +143,12 @@ rec = [
 
 pontos1, pontos2 = 0, 0
 
-#print(pygame.font.get_fonts())
-
+tela.fill((18, 19, 101)) 
 while True:
     mouse_pos = pygame.mouse.get_pos()
     if ESTADO == 'JOGANDO':
         desenhar_tabu()
-        pontos(pontos1, pontos2)
-
+        #pontos(pontos1, pontos2)
         for e in pygame.event.get():
             if e.type == QUIT:
                 pygame.quit()
@@ -159,18 +160,16 @@ while True:
                     else:
                         ESCOLHA = 'O'
                     testa_pos()
-                    while True:
-                        sleep(0.5)
-                        response = rede.send('espera')
-                        if response == 'OK': break
 
         if teste_vitoria('X'):
+            rede.send("vitoria 1")
             print('X VENCEU')
             texto_vitoria('X')
             ESTADO = 'RESET'
             pontos1 += 1
 
         elif teste_vitoria('O'):
+            rede.send("vitoria 2")
             print('O VENCEU')
             texto_vitoria('O')
             ESTADO = 'RESET'
@@ -181,7 +180,7 @@ while True:
             texto_vitoria('EMPATE')
             ESTADO = 'RESET'
 
-    else:
+    else: 
         for u in pygame.event.get():
             if u.type == QUIT:
                 pygame.quit()
@@ -191,12 +190,19 @@ while True:
                 desenhar_tabu()
 
     pygame.display.flip()
+    # Buscando por updates no estado do jogo 
     response = rede.send(f"updatevez {str(VEZ)}")
     response = response.split(' ')
-    if response != ['OK']: print(response)
+
+    if response[0] == "venceu":
+        if response[1] == '1':
+            texto_vitoria('X')
+        else:
+            texto_vitoria('O')
     if response[0] == 'u':
         VEZ = int(response[1])
+        quemjogou = int(response[2])
         x = int(response[3])
         y = int(response[4])
-        print(f"Jogada detectada na vez {VEZ}, posição x = {x}, posição y = {y}")
-        desenhar_peca([x, y])
+        # Desenhado a jogada realizada pelo outro jogador
+        desenhar_peca([x, y], quemjogou)

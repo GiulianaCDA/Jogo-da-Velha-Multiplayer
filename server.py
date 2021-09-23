@@ -1,7 +1,14 @@
 import socket
 from _thread import *
 
+# Iniciando variáveis globais
+x = '0'
+y = '0'
 number_of_connections = 0
+VEZ = '1'
+jogador = '1'
+ready = 0
+vitoria = '0'
 
 def main():
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -29,40 +36,41 @@ def main():
         start_new_thread(threaded, (conn,))
 
 def threaded(conn):
-    global number_of_connections
+    global number_of_connections, VEZ, x, y, ready, jogador, vitoria
     conn.send(str.encode('Início'))
-    VEZ = '1'
     response = ' '
-    jogador = '1'
-    x = '0' #inicializando x
-    y = '0' #inicializando y
-    ready = 0
+
     while True:
         try:
             request = conn.recv(4096).decode('utf-8')
             request = request.split(' ')
+            # op = código de operação enviado pelo cliente
             op = request[0]
-            print(request)
             if op == "players":
                 response = str(number_of_connections)
+            # Operação de recebimento de jogadas
             elif op == "jogada":
                 jogador = request[1]
+                print(f"Jogador {jogador} fez uma jogada")
                 x = request[2]
                 y = request[3]
                 if VEZ == '1':
                     VEZ = '2'
-                else: VEZ = '1'
+                elif VEZ == '2': 
+                    VEZ = '1'
+            # Atualizar os clients das jogadas realizadas
             elif op == "updatevez":
-                #print(f"Vez: {VEZ} request: {request[1]}")
-                if request[1] != VEZ: 
-                    print(f"u {VEZ} {jogador} {x} {y}")
+                if vitoria != "0":
+                    response = f"venceu {vitoria}"
+                elif request[1] != VEZ:
                     ready = 1
                     response = f"u {VEZ} {jogador} {x} {y}"
                 else:
                     response = "OK"
-            elif op == 'espera':
-                if ready == 1: response = 'OK'
-                else: response = 'esperando'
+            elif op == "vitoria":
+                print(f"vitória do jogador {request[1]}")
+                vitoria = request[1]
+
             conn.sendall(str.encode(response))
         except Exception as error:
             print('Error on server side!', error)

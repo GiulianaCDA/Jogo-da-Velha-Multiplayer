@@ -23,8 +23,9 @@ class Network:
 
 def wait_player(rede, screen):
     arial = pygame.font.SysFont('arial', 70)
-    texto = arial.render('Aguarde...', True, (0, 255, 0), 0)
-    screen.blit(texto, (115, 265))
+    texto = arial.render('Aguarde...', True, (255, 216, 110))
+    screen.fill((18, 19, 101)) 
+    screen.blit(texto, (115, 265)) 
     pygame.display.flip()
     
     player = 2
