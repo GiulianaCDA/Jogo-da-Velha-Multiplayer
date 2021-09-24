@@ -94,16 +94,6 @@ def reset():
         ]
         tela.fill(0)
 
-'''def pontos(pontos1, pontos2):
-    opensans = pygame.font.SysFont('opensanscondensed', 20)
-    jogador1 = 'Jogador1 = {}'.format(pontos1)
-    jogador2 = 'Jogador2 = {}'.format(pontos2) 
-
-    jd1 = opensans.render(jogador1, True, (188, 186, 186))
-    jd2 = opensans.render(jogador2, True, (188, 186, 186))
-    tela.blit(jd1, (0, 0))
-    tela.blit(jd2, (420, 0))'''
-
 pygame.init() 
 
 rede = Network()
